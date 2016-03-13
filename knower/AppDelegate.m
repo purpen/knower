@@ -7,8 +7,27 @@
 //
 
 #import "AppDelegate.h"
+#import "UKConfig.h"
+#import "UKRootViewController.h"
+#import "UKNavViewController.h"
+#import "UKLocationViewController.h"
 
-@interface AppDelegate ()
+#import <BaiduMapAPI_Base/BMKBaseComponent.h> //引入base相关所有的头文件
+#import <BaiduMapAPI_Map/BMKMapComponent.h>//引入地图功能所有的头文件
+#import <BaiduMapAPI_Search/BMKSearchComponent.h>//引入检索功能所有的头文件
+#import <BaiduMapAPI_Cloud/BMKCloudSearchComponent.h>//引入云检索功能所有的头文件
+#import <BaiduMapAPI_Location/BMKLocationComponent.h>//引入定位功能所有的头文件
+#import <BaiduMapAPI_Utils/BMKUtilsComponent.h>//引入计算工具所有的头文件
+#import <BaiduMapAPI_Radar/BMKRadarComponent.h>//引入周边雷达功能所有的头文件
+#import <BaiduMapAPI_Map/BMKMapView.h>//只引入所需的单个头文件
+
+@interface AppDelegate () {
+    BMKMapManager *_mapManager;
+}
+
+@property (strong, nonatomic) UKRootViewController *rootViewController;
+@property (strong, nonatomic) UKNavViewController  *navViewController;
+@property (strong, nonatomic) UKLocationViewController *locationViewController;
 
 @end
 
@@ -16,7 +35,28 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
+    
+    // 要使用百度地图，请先启动BaiduMapManager
+    _mapManager = [[BMKMapManager alloc] init];
+    
+    // 如果要关注网络及授权验证事件，请设定generalDelegate参数
+    BOOL ret = [_mapManager start:kBaiduAK generalDelegate:nil];
+    if (!ret) {
+        NSLog(@"Baidu map manager start failed!");
+    }
+    
+    _rootViewController = [[UKRootViewController alloc] init];
+    
+    _navViewController  = [[UKNavViewController alloc] initWithRootViewController:_rootViewController];
+    
+    self.window.rootViewController = _navViewController;
+    
+    // 显示窗口
+    [self.window makeKeyAndVisible];
+    
+    
     return YES;
 }
 
